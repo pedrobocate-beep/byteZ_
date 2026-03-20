@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>byteZ | Hub de Jogos</title>
+    <style>
+        :root {
+            --primary: #00ff88;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-top: 20px;
+        }
+
+        header h1 {
+            font-size: 4rem;
+            color: var(--primary);
+            text-transform: lowercase;
+            letter-spacing: -3px;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        header p { opacity: 0.6; margin-top: 5px; }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border-color: var(--primary);
+        }
+
+        .game-thumb {
+            width: 100%;
+            height: 160px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-bottom: 2px solid rgba(0,0,0,0.2);
+        }
+
+        /* CAPAS USANDO SEUS LINKS */
+        .thumb-kour { background-image: url('https://imgs.search.brave.com/2Bmhsl3qR1MAfaI8ikZzJP5l4z5K1XQaYSbiqfQ0uDA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/dGl0b3R1LmlvL2lt/YWdlcy9nYW1lcy9r/b3VyLWlvLTM1Nngy/MDAuanBn'); }
+        .thumb-brotato { background-image: url('https://imgs.search.brave.com/z_bxh4roeBR_WfiOs1RPnRuWsoxQo-gxkyjFgfiR9z8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnJl/ZGQuaXQvZjZtd2lu/ZzRnd3lhMS5qcGc'); }
+        .thumb-xadrez { background-image: url('https://imgs.search.brave.com/EFXewqm1dwt_iZZABuryStrD1Qv_qH5MPC1HvRnIhH8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMucGV4ZWxzLmNv/bS9waG90b3MvMjYw/MDI0L3BleGVscy1w/aG90by0yNjAwMjQu/anBlZz9hdXRvPWNv/bXByZXNzJmNzPXRp/bnlzcmdiJmRwcj0x/Jnc9NTAw'); }
+        .thumb-space { background-image: url('https://imgs.search.brave.com/lM63nkRGzD5ZjxRwn6XOLaiL-9Tj117h-GVKJ63flAo/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zcGFj/ZXdhdmVzb25saW5l/LmlvL2RhdGEvaW1h/Z2UvZ2FtZS9zcGFj/ZS13YXZlcy1iYW5u/ZXIucG5n'); }
+        .thumb-veck { background-image: url('https://imgs.search.brave.com/1vVePyNLNA9V4yGgB3NaOmQ0FpkUE7KhCCDksGb_1pU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMudHJlbmRpbmdn/YW1lcy5pby9nYW1l/cy92ZWNraW8uanBn'); }
+        .thumb-evowars { background-image: url('https://imgs.search.brave.com/B49AGYw1CDnIzYFrg6iMsvkCl9DbuqCbgFpGJEGH0ww/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9sbWht/b2QubWUvd3AtY29u/dGVudC91cGxvYWRz/LzIwMjIvMDUvRXZv/d2Fycy5pby1tb2Qu/anBn'); }
+        .thumb-bloxd { background-image: url('https://imgs.search.brave.com/gd_GZo8gurrduUwsoP-Z3LiqBgapyTb2eiRR1LJFD9g/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9wbGF5/Lmd4LmdhbWVzL2dh/bWUvYWE3N2YxNzUt/YzY5Ni00MWNiLWI2/MjAtN2VlMmM0NmEz/NTMzL2NvdmVyL2Y1/YzNkYWEzLWFlNmUt/NDI0Ni1iZDFhLWUz/NDEwNmJhOWQwNS93/ZWJwLTY0MHgzNjA_/ZTNlZTYxODBjNTMy/ZGQxOTUzYjY5MGQx/YTQ2ZTIxZjE'); }
+
+        .game-info { padding: 15px; text-align: center; }
+        .game-info h3 { margin: 0; font-size: 1.1rem; }
+        .game-info p { margin: 5px 0 0; font-size: 0.85rem; opacity: 0.5; }
+
+        /* Overlay do Jogo */
+        #game-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.98);
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        .nav-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 30px; background: #1e293b;
+        }
+
+        .close-btn {
+            background: #ef4444; color: white; border: none;
+            padding: 8px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;
+        }
+
+        iframe { flex-grow: 1; border: none; width: 95%; margin: 10px auto; border-radius: 12px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>byteZ</h1>
+        <p>Acesse os melhores títulos da web em um só lugar.</p>
+    </header>
+
+    <div class="game-grid">
+        <div class="game-card" onclick="openGame('https://kour.io/')">
+            <div class="game-thumb thumb-kour"></div>
+            <div class="game-info"><h3>Kour.io</h3><p>FPS Arena</p></div>
+        </div>
+
+        <div class="game-card" onclick="openGame('https://brotatob.github.io/brotato/')">
+            <div class="game-thumb thumb-brotato"></div>
+            <div class="game-info"><h3>Brotato</h3><p>Survival</p></div>
+        </div>
+
+        <div class="game-card" onclick="openGame('https://pedrobocate-beep.github.io/xadrez/')">
+            <div class="game-thumb thumb-xadrez"></div>
+            <div class="game-info"><h3>Xadrez</h3><p>Estratégia</p></div>
+        </div>
+
+        <div class="game-card" onclick="openGame('https://spacewaves.io/')">
+            <div class="game-thumb thumb-space"></div>
+            <div class="game-info"><h3>Space Waves</h3><p>Ritmo</p></div>
+        </div>
+
+        <div class="game-card" onclick="openGame('https://veck.io/')">
+            <div class="game-thumb thumb-veck"></div>
+            <div class="game-info"><h3>Veck.io</h3><p>Shooter</p></div>
+        </div>
+
+        <div class="game-card" onclick="openGame('https://evowars.io/')">
+            <div class="game-thumb thumb-evowars"></div>
+            <div class="game-info"><h3>EvoWars.io</h3><p>Evolução</p></div>
+        </div>
+
+        <div class="game-card" onclick="openGame('https://bloxd.io/')">
+            <div class="game-thumb thumb-bloxd"></div>
+            <div class="game-info"><h3>Bloxd.io</h3><p>Construção</p></div>
+        </div>
+    </div>
+
+    <div id="game-overlay">
+        <div class="nav-bar">
+            <span style="color: var(--primary); font-weight: bold;">byteZ Player</span>
+            <button class="close-btn" onclick="closeGame()">SAIR DO JOGO</button>
+        </div>
+        <iframe id="game-frame" src=""></iframe>
+    </div>
+
+    <script>
+        function openGame(url) {
+            const overlay = document.getElementById('game-overlay');
+            const iframe = document.getElementById('game-frame');
+            iframe.src = url;
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeGame() {
+            const overlay = document.getElementById('game-overlay');
+            const iframe = document.getElementById('game-frame');
+            iframe.src = ''; 
+            overlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    </script>
+</body>
+</html>
