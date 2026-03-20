@@ -23,7 +23,7 @@
 
         header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 30px;
             padding-top: 20px;
         }
 
@@ -37,6 +37,24 @@
         }
 
         header p { opacity: 0.6; margin-top: 5px; }
+
+        .btn-add {
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        .btn-add:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+        }
 
         .game-grid {
             display: grid;
@@ -68,23 +86,15 @@
             background-position: center;
             background-repeat: no-repeat;
             border-bottom: 2px solid rgba(0,0,0,0.2);
+            background-color: #2d3748;
         }
-
-        /* CAPAS USANDO SEUS LINKS */
-        .thumb-kour { background-image: url('https://imgs.search.brave.com/2Bmhsl3qR1MAfaI8ikZzJP5l4z5K1XQaYSbiqfQ0uDA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/dGl0b3R1LmlvL2lt/YWdlcy9nYW1lcy9r/b3VyLWlvLTM1Nngy/MDAuanBn'); }
-        .thumb-brotato { background-image: url('https://imgs.search.brave.com/z_bxh4roeBR_WfiOs1RPnRuWsoxQo-gxkyjFgfiR9z8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pLnJl/ZGQuaXQvZjZtd2lu/ZzRnd3lhMS5qcGc'); }
-        .thumb-xadrez { background-image: url('https://imgs.search.brave.com/EFXewqm1dwt_iZZABuryStrD1Qv_qH5MPC1HvRnIhH8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMucGV4ZWxzLmNv/bS9waG90b3MvMjYw/MDI0L3BleGVscy1w/aG90by0yNjAwMjQu/anBlZz9hdXRvPWNv/bXByZXNzJmNzPXRp/bnlzcmdiJmRwcj0x/Jnc9NTAw'); }
-        .thumb-space { background-image: url('https://imgs.search.brave.com/lM63nkRGzD5ZjxRwn6XOLaiL-9Tj117h-GVKJ63flAo/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zcGFj/ZXdhdmVzb25saW5l/LmlvL2RhdGEvaW1h/Z2UvZ2FtZS9zcGFj/ZS13YXZlcy1iYW5u/ZXIucG5n'); }
-        .thumb-veck { background-image: url('https://imgs.search.brave.com/1vVePyNLNA9V4yGgB3NaOmQ0FpkUE7KhCCDksGb_1pU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMudHJlbmRpbmdn/YW1lcy5pby9nYW1l/cy92ZWNraW8uanBn'); }
-        .thumb-evowars { background-image: url('https://imgs.search.brave.com/B49AGYw1CDnIzYFrg6iMsvkCl9DbuqCbgFpGJEGH0ww/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9sbWht/b2QubWUvd3AtY29u/dGVudC91cGxvYWRz/LzIwMjIvMDUvRXZv/d2Fycy5pby1tb2Qu/anBn'); }
-        .thumb-bloxd { background-image: url('https://imgs.search.brave.com/gd_GZo8gurrduUwsoP-Z3LiqBgapyTb2eiRR1LJFD9g/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9wbGF5/Lmd4LmdhbWVzL2dh/bWUvYWE3N2YxNzUt/YzY5Ni00MWNiLWI2/MjAtN2VlMmM0NmEz/NTMzL2NvdmVyL2Y1/YzNkYWEzLWFlNmUt/NDI0Ni1iZDFhLWUz/NDEwNmJhOWQwNS93/ZWJwLTY0MHgzNjA_/ZTNlZTYxODBjNTMy/ZGQxOTUzYjY5MGQx/YTQ2ZTIxZjE'); }
 
         .game-info { padding: 15px; text-align: center; }
         .game-info h3 { margin: 0; font-size: 1.1rem; }
         .game-info p { margin: 5px 0 0; font-size: 0.85rem; opacity: 0.5; }
 
         /* Overlay do Jogo */
-        #game-overlay {
+        .overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -104,6 +114,36 @@
         }
 
         iframe { flex-grow: 1; border: none; width: 95%; margin: 10px auto; border-radius: 12px; }
+
+        /* Estilos do Formulário Modal */
+        #form-modal {
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-container {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
+        }
+
+        .form-container h2 { margin-top: 0; color: var(--primary); text-align: center; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; }
+        .form-group input {
+            width: 100%; padding: 10px; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: var(--bg); color: white; box-sizing: border-box;
+        }
+
+        .form-buttons { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-submit { background: var(--primary); color: #000; flex: 1; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .btn-cancel { background: transparent; color: white; flex: 1; border: 1px solid #ef4444; padding: 10px; border-radius: 8px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -111,46 +151,14 @@
     <header>
         <h1>byteZ</h1>
         <p>Acesse os melhores títulos da web em um só lugar.</p>
+        <button class="btn-add" onclick="openAddModal()">+ Adicionar Jogo</button>
     </header>
 
-    <div class="game-grid">
-        <div class="game-card" onclick="openGame('https://kour.io/')">
-            <div class="game-thumb thumb-kour"></div>
-            <div class="game-info"><h3>Kour.io</h3><p>FPS Arena</p></div>
-        </div>
-
-        <div class="game-card" onclick="openGame('https://brotatob.github.io/brotato/')">
-            <div class="game-thumb thumb-brotato"></div>
-            <div class="game-info"><h3>Brotato</h3><p>Survival</p></div>
-        </div>
-
-        <div class="game-card" onclick="openGame('https://pedrobocate-beep.github.io/xadrez/')">
-            <div class="game-thumb thumb-xadrez"></div>
-            <div class="game-info"><h3>Xadrez</h3><p>Estratégia</p></div>
-        </div>
-
-        <div class="game-card" onclick="openGame('https://spacewaves.io/')">
-            <div class="game-thumb thumb-space"></div>
-            <div class="game-info"><h3>Space Waves</h3><p>Ritmo</p></div>
-        </div>
-
-        <div class="game-card" onclick="openGame('https://veck.io/')">
-            <div class="game-thumb thumb-veck"></div>
-            <div class="game-info"><h3>Veck.io</h3><p>Shooter</p></div>
-        </div>
-
-        <div class="game-card" onclick="openGame('https://evowars.io/')">
-            <div class="game-thumb thumb-evowars"></div>
-            <div class="game-info"><h3>EvoWars.io</h3><p>Evolução</p></div>
-        </div>
-
-        <div class="game-card" onclick="openGame('https://bloxd.io/')">
-            <div class="game-thumb thumb-bloxd"></div>
-            <div class="game-info"><h3>Bloxd.io</h3><p>Construção</p></div>
-        </div>
+    <div class="game-grid" id="game-grid-container">
+        <p style="text-align: center; width: 100%; grid-column: 1 / -1;">Carregando jogos...</p>
     </div>
 
-    <div id="game-overlay">
+    <div id="game-overlay" class="overlay">
         <div class="nav-bar">
             <span style="color: var(--primary); font-weight: bold;">byteZ Player</span>
             <button class="close-btn" onclick="closeGame()">SAIR DO JOGO</button>
@@ -158,8 +166,67 @@
         <iframe id="game-frame" src=""></iframe>
     </div>
 
-    <script>
-        function openGame(url) {
+    <div id="form-modal" class="overlay">
+        <div class="form-container">
+            <h2>Postar Novo Jogo</h2>
+            <form id="add-game-form">
+                <div class="form-group">
+                    <label>Nome do Jogo</label>
+                    <input type="text" id="game-name" required maxlength="30">
+                </div>
+                <div class="form-group">
+                    <label>Categoria (ex: Ação, Puzzle)</label>
+                    <input type="text" id="game-category" required maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label>Link da Capa (Imagem)</label>
+                    <input type="url" id="game-thumb-url" required placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Link do Jogo</label>
+                    <input type="url" id="game-url" required placeholder="https://...">
+                </div>
+                <div class="form-buttons">
+                    <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancelar</button>
+                    <button type="submit" class="btn-submit">Publicar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        // 1. Importações do Firebase SDK v9
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // 2. Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDIh-GgqeniM2HQqllJnE1lekZmdqPs2vw",
+            authDomain: "bytez-fb71a.firebaseapp.com",
+            projectId: "bytez-fb71a",
+            storageBucket: "bytez-fb71a.firebasestorage.app",
+            messagingSenderId: "401836877835",
+            appId: "1:401836877835:web:2ef26b9bf8cb759302bf0e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // 3. Palavras Bloqueadas
+        const blockedWords = [
+            "hackeado", "hacked", "hack3ado", "h4ckeado", 
+            "deface", "defaced", "pwned", "owned", 
+            "vandalismo", "vandalizado", "invadido", "invadida"
+        ];
+
+        // Função para checar palavras bloqueadas
+        function hasBlockedWords(text) {
+            const lowerText = text.toLowerCase();
+            return blockedWords.some(word => lowerText.includes(word));
+        }
+
+        // 4. Funções Globais (Tornando acessíveis no HTML)
+        window.openGame = (url) => {
             const overlay = document.getElementById('game-overlay');
             const iframe = document.getElementById('game-frame');
             iframe.src = url;
@@ -167,13 +234,107 @@
             document.body.style.overflow = 'hidden';
         }
 
-        function closeGame() {
-            const overlay = document.getElementById('game-overlay');
-            const iframe = document.getElementById('game-frame');
-            iframe.src = ''; 
-            overlay.style.display = 'none';
+        window.closeGame = () => {
+            document.getElementById('game-overlay').style.display = 'none';
+            document.getElementById('game-frame').src = ''; 
             document.body.style.overflow = 'auto';
         }
+
+        window.openAddModal = () => {
+            document.getElementById('form-modal').style.display = 'flex';
+        }
+
+        window.closeAddModal = () => {
+            document.getElementById('form-modal').style.display = 'none';
+            document.getElementById('add-game-form').reset();
+        }
+
+        // 5. Carregar Jogos do Banco de Dados
+        async function loadGames() {
+            const grid = document.getElementById('game-grid-container');
+            grid.innerHTML = ''; // Limpa o "Carregando..."
+
+            try {
+                const q = query(collection(db, "games"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    grid.innerHTML = '<p style="text-align: center; width: 100%; grid-column: 1 / -1;">Nenhum jogo postado ainda. Seja o primeiro!</p>';
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const game = doc.data();
+                    const card = document.createElement('div');
+                    card.className = 'game-card';
+                    card.onclick = () => window.openGame(game.url);
+                    
+                    card.innerHTML = `
+                        <div class="game-thumb" style="background-image: url('${game.thumb}')"></div>
+                        <div class="game-info">
+                            <h3>${game.name}</h3>
+                            <p>${game.category}</p>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error("Erro ao carregar jogos: ", error);
+                grid.innerHTML = '<p style="color: red; text-align: center; grid-column: 1 / -1;">Erro ao carregar a lista de jogos.</p>';
+            }
+        }
+
+        // 6. Lógica de Postagem (Submit do Formulário)
+        document.getElementById('add-game-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Verificação de Limite de 1 post por dia (24h = 86400000 ms)
+            const lastPostTime = localStorage.getItem('bytez_last_post');
+            if (lastPostTime) {
+                const timePassed = Date.now() - parseInt(lastPostTime);
+                if (timePassed < 86400000) {
+                    alert('Você já postou um jogo hoje! Volte amanhã para postar mais.');
+                    return;
+                }
+            }
+
+            const name = document.getElementById('game-name').value;
+            const category = document.getElementById('game-category').value;
+            const thumb = document.getElementById('game-thumb-url').value;
+            const url = document.getElementById('game-url').value;
+
+            // Verificação de Palavras Bloqueadas
+            if (hasBlockedWords(name) || hasBlockedWords(category)) {
+                alert('Atenção: O nome ou a categoria contém palavras que não são permitidas em nossa comunidade.');
+                return;
+            }
+
+            try {
+                // Adiciona no Firebase
+                await addDoc(collection(db, "games"), {
+                    name: name,
+                    category: category,
+                    thumb: thumb,
+                    url: url,
+                    createdAt: serverTimestamp()
+                });
+
+                // Salva a hora do post no LocalStorage
+                localStorage.setItem('bytez_last_post', Date.now());
+
+                alert('Jogo postado com sucesso!');
+                window.closeAddModal();
+                loadGames(); // Recarrega a grid para mostrar o novo jogo
+
+            } catch (error) {
+                console.error("Erro ao adicionar documento: ", error);
+                alert('Erro ao postar o jogo. Tente novamente.');
+            }
+        });
+
+        // Inicializa carregando os jogos quando a página abre
+        loadGames();
+
     </script>
 </body>
 </html>
