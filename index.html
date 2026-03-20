@@ -1,340 +1,843 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>byteZ | Hub de Jogos</title>
+    <title>ByteZ - Game Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Firebase CDN (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
     <style>
-        :root {
-            --primary: #00ff88;
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --text: #f8fafc;
+        /* ===== RESET & BASE ===== */
+        *{margin:0;padding:0;box-sizing:border-box}
+        ::-webkit-scrollbar{width:8px}
+        ::-webkit-scrollbar-track{background:#0d0d1a}
+        ::-webkit-scrollbar-thumb{background:#7c5ce7;border-radius:4px}
+        ::-webkit-scrollbar-thumb:hover{background:#9b7dff}
+
+        body{
+            font-family:'Poppins',sans-serif;
+            background:#0d0d1a;
+            color:#e8e8f0;
+            min-height:100vh;
+            background-image:
+                radial-gradient(ellipse at 15% 50%,rgba(124,92,231,.1) 0%,transparent 55%),
+                radial-gradient(ellipse at 85% 15%,rgba(0,180,216,.07) 0%,transparent 55%);
         }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 20px;
-            overflow-x: hidden;
+        a{text-decoration:none;color:inherit}
+
+        /* ===== HEADER ===== */
+        .header{
+            background:linear-gradient(135deg,#0d0d1a 0%,#1a1a3e 50%,#2d1b69 100%);
+            padding:48px 24px 40px;
+            text-align:center;
+            border-bottom:1px solid rgba(124,92,231,.2);
+            position:relative;
+            overflow:hidden;
+        }
+        .header::before{
+            content:'';position:absolute;width:400px;height:400px;
+            background:radial-gradient(circle,rgba(124,92,231,.15),transparent 70%);
+            top:-200px;right:-100px;pointer-events:none;
+        }
+        .logo{
+            font-size:3rem;font-weight:900;letter-spacing:-1px;
+            background:linear-gradient(135deg,#7c5ce7,#a78bfa,#38bdf8);
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+            background-clip:text;display:inline-block;
+        }
+        .logo-emoji{font-size:2.6rem;vertical-align:middle;margin-right:8px;
+            -webkit-text-fill-color:initial;}
+        .tagline{color:#9898b0;font-size:.95rem;margin-top:4px;font-weight:300}
+
+        .header-actions{margin-top:24px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+
+        /* ===== BUTTONS ===== */
+        .btn{
+            display:inline-flex;align-items:center;gap:8px;
+            padding:12px 28px;border-radius:12px;font-family:inherit;
+            font-weight:600;font-size:.95rem;cursor:pointer;
+            border:none;transition:all .3s ease;
+        }
+        .btn-primary{
+            background:linear-gradient(135deg,#7c5ce7,#6c3ce7);
+            color:#fff;box-shadow:0 4px 20px rgba(124,92,231,.35);
+        }
+        .btn-primary:hover{
+            transform:translateY(-2px);
+            box-shadow:0 8px 30px rgba(124,92,231,.5);
+        }
+        .btn-secondary{
+            background:rgba(255,255,255,.06);color:#c8c8e0;
+            border:1px solid rgba(255,255,255,.1);
+        }
+        .btn-secondary:hover{background:rgba(255,255,255,.12)}
+        .btn-play{
+            background:linear-gradient(135deg,#7c5ce7,#a78bfa);
+            color:#fff;width:100%;justify-content:center;
+            padding:10px 20px;border-radius:10px;font-size:.9rem;
+        }
+        .btn-play:hover{box-shadow:0 4px 20px rgba(124,92,231,.4);transform:translateY(-1px)}
+        .btn-close-modal{
+            position:absolute;top:16px;right:16px;
+            background:rgba(255,255,255,.08);border:none;
+            color:#e8e8f0;font-size:1.4rem;width:36px;height:36px;
+            border-radius:50%;cursor:pointer;display:flex;
+            align-items:center;justify-content:center;transition:.3s;
+        }
+        .btn-close-modal:hover{background:rgba(255,80,80,.3);color:#ff5252}
+
+        /* ===== SEARCH ===== */
+        .search-section{
+            max-width:560px;margin:0 auto;padding:24px 20px 8px;
+        }
+        .search-box{
+            display:flex;align-items:center;
+            background:rgba(255,255,255,.05);
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:14px;padding:0 18px;
+            transition:border-color .3s;
+        }
+        .search-box:focus-within{border-color:rgba(124,92,231,.5)}
+        .search-icon{font-size:1.1rem;margin-right:10px;opacity:.5}
+        .search-box input{
+            flex:1;background:none;border:none;outline:none;
+            color:#e8e8f0;font-family:inherit;font-size:.95rem;
+            padding:14px 0;
+        }
+        .search-box input::placeholder{color:#6a6a80}
+
+        /* ===== COUNTER ===== */
+        .counter-bar{
+            max-width:1320px;margin:0 auto;
+            padding:12px 28px;display:flex;
+            align-items:center;justify-content:space-between;
+            flex-wrap:wrap;gap:8px;
+        }
+        .counter{font-size:.85rem;color:#7a7a96;font-weight:500}
+        .counter span{color:#a78bfa;font-weight:700}
+
+        /* ===== GAME GRID ===== */
+        .games-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+            gap:24px;max-width:1320px;margin:0 auto;
+            padding:8px 24px 60px;
+        }
+        .game-card{
+            background:#14142a;
+            border:1px solid rgba(255,255,255,.05);
+            border-radius:16px;overflow:hidden;
+            transition:transform .35s cubic-bezier(.22,1,.36,1),
+                        box-shadow .35s cubic-bezier(.22,1,.36,1),
+                        border-color .35s;
+            display:flex;flex-direction:column;
+        }
+        .game-card:hover{
+            transform:translateY(-8px);
+            box-shadow:0 16px 48px rgba(124,92,231,.28);
+            border-color:rgba(124,92,231,.25);
+        }
+        .game-card-img-wrap{
+            position:relative;width:100%;aspect-ratio:16/9;
+            background:#1e1e3a;overflow:hidden;
+        }
+        .game-card-img-wrap img{
+            width:100%;height:100%;object-fit:cover;
+            transition:transform .4s cubic-bezier(.22,1,.36,1);
+        }
+        .game-card:hover .game-card-img-wrap img{transform:scale(1.06)}
+        .game-card-img-wrap .overlay{
+            position:absolute;inset:0;
+            background:linear-gradient(180deg,transparent 50%,rgba(10,10,26,.85));
+            pointer-events:none;
+        }
+        .game-card-body{
+            padding:16px 18px 18px;flex:1;
+            display:flex;flex-direction:column;
+        }
+        .game-card-title{
+            font-size:1.05rem;font-weight:700;
+            margin-bottom:4px;white-space:nowrap;
+            overflow:hidden;text-overflow:ellipsis;
+        }
+        .game-card-meta{
+            font-size:.78rem;color:#6a6a8a;
+            margin-bottom:14px;display:flex;
+            align-items:center;gap:12px;flex-wrap:wrap;
+        }
+        .game-card-meta span{display:flex;align-items:center;gap:4px}
+        .game-card-body .btn-play{margin-top:auto}
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state{
+            text-align:center;padding:80px 24px;
+            color:#6a6a8a;
+        }
+        .empty-state .emoji{font-size:3rem;margin-bottom:12px}
+        .empty-state p{font-size:1rem;max-width:380px;margin:0 auto}
+
+        /* ===== LOADING ===== */
+        .loading{
+            display:flex;flex-direction:column;
+            align-items:center;padding:80px 24px;gap:16px;
+        }
+        .spinner{
+            width:42px;height:42px;
+            border:3px solid rgba(124,92,231,.15);
+            border-top-color:#7c5ce7;
+            border-radius:50%;
+            animation:spin .8s linear infinite;
+        }
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .loading p{color:#6a6a8a;font-size:.9rem}
+
+        /* ===== MODAL ===== */
+        .modal-backdrop{
+            position:fixed;inset:0;
+            background:rgba(6,6,16,.85);
+            backdrop-filter:blur(6px);
+            z-index:9000;
+            opacity:0;visibility:hidden;
+            transition:opacity .3s,visibility .3s;
+            display:flex;align-items:center;justify-content:center;
+            padding:24px;
+        }
+        .modal-backdrop.active{opacity:1;visibility:visible}
+        .modal-box{
+            background:#16162e;
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:20px;width:100%;max-width:520px;
+            padding:36px 32px 28px;position:relative;
+            transform:translateY(20px) scale(.96);
+            transition:transform .35s cubic-bezier(.22,1,.36,1);
+            max-height:90vh;overflow-y:auto;
+        }
+        .modal-backdrop.active .modal-box{transform:translateY(0) scale(1)}
+        .modal-title{
+            font-size:1.35rem;font-weight:800;margin-bottom:4px;
+            background:linear-gradient(135deg,#a78bfa,#38bdf8);
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+            background-clip:text;
+        }
+        .modal-subtitle{font-size:.82rem;color:#6a6a8a;margin-bottom:24px}
+
+        /* ===== FORM ===== */
+        .form-group{margin-bottom:18px}
+        .form-label{
+            display:block;font-size:.82rem;font-weight:600;
+            color:#9898b0;margin-bottom:6px;
+        }
+        .form-input,.form-textarea{
+            width:100%;padding:12px 16px;
+            background:rgba(255,255,255,.04);
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:10px;color:#e8e8f0;
+            font-family:inherit;font-size:.9rem;
+            transition:border-color .3s;outline:none;
+        }
+        .form-input:focus,.form-textarea:focus{border-color:rgba(124,92,231,.5)}
+        .form-input::placeholder,.form-textarea::placeholder{color:#4a4a66}
+        .form-textarea{resize:vertical;min-height:70px}
+        .form-hint{font-size:.72rem;color:#5a5a76;margin-top:4px}
+        .form-preview{
+            margin-top:8px;border-radius:10px;overflow:hidden;
+            max-height:160px;background:#1e1e3a;
+            display:none;
+        }
+        .form-preview img{width:100%;max-height:160px;object-fit:cover}
+        .form-preview.visible{display:block}
+        .form-error{color:#ff5252;font-size:.78rem;margin-top:4px;display:none}
+        .form-error.visible{display:block}
+
+        .char-count{
+            text-align:right;font-size:.7rem;color:#5a5a76;margin-top:2px;
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-top: 20px;
+        .form-submit{
+            width:100%;padding:14px;margin-top:8px;
         }
 
-        header h1 {
-            font-size: 4rem;
-            color: var(--primary);
-            text-transform: lowercase;
-            letter-spacing: -3px;
-            margin: 0;
-            text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        .limit-notice{
+            background:rgba(255,152,0,.08);
+            border:1px solid rgba(255,152,0,.2);
+            border-radius:10px;padding:10px 14px;
+            font-size:.78rem;color:#ffa726;
+            margin-bottom:20px;display:flex;
+            align-items:center;gap:8px;
         }
 
-        header p { opacity: 0.6; margin-top: 5px; }
-
-        .btn-add {
-            background: var(--primary);
-            color: #000;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: 0.3s;
+        /* ===== TOAST ===== */
+        #toast-container{
+            position:fixed;top:20px;right:20px;z-index:99999;
+            display:flex;flex-direction:column;gap:8px;
+            pointer-events:none;
+        }
+        .toast{
+            padding:14px 22px;border-radius:12px;color:#fff;
+            font-family:'Poppins',sans-serif;font-size:.88rem;
+            font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,.35);
+            animation:toastIn .4s cubic-bezier(.22,1,.36,1) forwards;
+            pointer-events:auto;max-width:380px;
+            display:flex;align-items:center;gap:10px;
+        }
+        .toast.removing{animation:toastOut .3s ease forwards}
+        .toast-success{background:linear-gradient(135deg,#1b9e3e,#27ae60)}
+        .toast-error{background:linear-gradient(135deg,#c0392b,#e74c3c)}
+        .toast-warning{background:linear-gradient(135deg,#e67e22,#f39c12)}
+        .toast-info{background:linear-gradient(135deg,#2980b9,#3498db)}
+        @keyframes toastIn{
+            from{transform:translateX(120%);opacity:0}
+            to{transform:translateX(0);opacity:1}
+        }
+        @keyframes toastOut{
+            from{transform:translateX(0);opacity:1}
+            to{transform:translateX(120%);opacity:0}
         }
 
-        .btn-add:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+        /* ===== FOOTER ===== */
+        .footer{
+            text-align:center;padding:32px 24px;
+            border-top:1px solid rgba(255,255,255,.04);
+            color:#4a4a66;font-size:.8rem;
+        }
+        .footer a{color:#7c5ce7;font-weight:600}
+
+        /* ===== RULES ===== */
+        .rules-section{
+            max-width:700px;margin:0 auto 32px;padding:0 24px;
+        }
+        .rules-box{
+            background:rgba(124,92,231,.06);
+            border:1px solid rgba(124,92,231,.12);
+            border-radius:14px;padding:20px 24px;
+        }
+        .rules-box h3{
+            font-size:.95rem;font-weight:700;color:#a78bfa;margin-bottom:10px;
+            display:flex;align-items:center;gap:8px;
+        }
+        .rules-box ul{
+            list-style:none;display:flex;flex-direction:column;gap:6px;
+        }
+        .rules-box li{
+            font-size:.82rem;color:#8888a0;
+            padding-left:18px;position:relative;
+        }
+        .rules-box li::before{
+            content:'•';position:absolute;left:0;color:#7c5ce7;font-weight:bold;
         }
 
-        .game-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 25px;
-            max-width: 1200px;
-            margin: 0 auto;
+        /* ===== RESPONSIVE ===== */
+        @media(max-width:640px){
+            .logo{font-size:2.2rem}
+            .header{padding:32px 16px 28px}
+            .games-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;padding:8px 16px 48px}
+            .modal-box{padding:28px 20px 20px}
+            .game-card-body{padding:12px 14px 14px}
         }
 
-        .game-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.05);
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeUp{
+            from{opacity:0;transform:translateY(24px)}
+            to{opacity:1;transform:translateY(0)}
         }
-
-        .game-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            border-color: var(--primary);
-        }
-
-        .game-thumb {
-            width: 100%;
-            height: 160px;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            border-bottom: 2px solid rgba(0,0,0,0.2);
-            background-color: #2d3748;
-        }
-
-        .game-info { padding: 15px; text-align: center; }
-        .game-info h3 { margin: 0; font-size: 1.1rem; }
-        .game-info p { margin: 5px 0 0; font-size: 0.85rem; opacity: 0.5; }
-
-        /* Overlay do Jogo */
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.98);
-            z-index: 1000;
-            flex-direction: column;
-        }
-
-        .nav-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 30px; background: #1e293b;
-        }
-
-        .close-btn {
-            background: #ef4444; color: white; border: none;
-            padding: 8px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;
-        }
-
-        iframe { flex-grow: 1; border: none; width: 95%; margin: 10px auto; border-radius: 12px; }
-
-        /* Estilos do Formulário Modal */
-        #form-modal {
-            justify-content: center;
-            align-items: center;
-        }
-
-        .form-container {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 400px;
-            border: 1px solid var(--primary);
-            box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
-        }
-
-        .form-container h2 { margin-top: 0; color: var(--primary); text-align: center; }
-        
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; }
-        .form-group input {
-            width: 100%; padding: 10px; border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: var(--bg); color: white; box-sizing: border-box;
-        }
-
-        .form-buttons { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-submit { background: var(--primary); color: #000; flex: 1; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .btn-cancel { background: transparent; color: white; flex: 1; border: 1px solid #ef4444; padding: 10px; border-radius: 8px; cursor: pointer; }
+        .game-card{animation:fadeUp .5s cubic-bezier(.22,1,.36,1) backwards}
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>byteZ</h1>
-        <p>Acesse os melhores títulos da web em um só lugar.</p>
-        <button class="btn-add" onclick="openAddModal()">+ Adicionar Jogo</button>
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container"></div>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo"><span class="logo-emoji">🎮</span>ByteZ</div>
+        <p class="tagline">Compartilhe e jogue jogos HTML gratuitamente!</p>
+        <div class="header-actions">
+            <button class="btn btn-primary" onclick="openPostModal()">➕ Postar Jogo</button>
+        </div>
     </header>
 
-    <div class="game-grid" id="game-grid-container">
-        <p style="text-align: center; width: 100%; grid-column: 1 / -1;">Carregando jogos...</p>
-    </div>
-
-    <div id="game-overlay" class="overlay">
-        <div class="nav-bar">
-            <span style="color: var(--primary); font-weight: bold;">byteZ Player</span>
-            <button class="close-btn" onclick="closeGame()">SAIR DO JOGO</button>
+    <!-- SEARCH -->
+    <div class="search-section">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="Buscar jogos..." oninput="filterGames()">
         </div>
-        <iframe id="game-frame" src=""></iframe>
     </div>
 
-    <div id="form-modal" class="overlay">
-        <div class="form-container">
-            <h2>Postar Novo Jogo</h2>
-            <form id="add-game-form">
+    <!-- COUNTER -->
+    <div class="counter-bar">
+        <div class="counter">🕹️ <span id="gameCount">0</span> jogos disponíveis</div>
+    </div>
+
+    <!-- LOADING -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Carregando jogos...</p>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div id="emptyState" class="empty-state" style="display:none">
+        <div class="emoji">🎮</div>
+        <p>Nenhum jogo encontrado. Seja o primeiro a postar!</p>
+    </div>
+
+    <!-- GAMES GRID -->
+    <div id="gamesGrid" class="games-grid"></div>
+
+    <!-- RULES -->
+    <div class="rules-section">
+        <div class="rules-box">
+            <h3>📋 Regras</h3>
+            <ul>
+                <li>Limite de <strong>1 post por dia</strong> por usuário</li>
+                <li>Palavras bloqueadas serão filtradas automaticamente</li>
+                <li>Poste apenas jogos HTML ou links de jogos online</li>
+                <li>Respeite a comunidade — sem conteúdo ofensivo</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        ByteZ Game Hub &copy; 2025 — Feito com 💜 e Firebase
+    </footer>
+
+    <!-- POST MODAL -->
+    <div id="postModal" class="modal-backdrop" onclick="handleBackdropClick(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <button class="btn-close-modal" onclick="closePostModal()">✕</button>
+            <div class="modal-title">🎮 Postar Novo Jogo</div>
+            <div class="modal-subtitle">Preencha os campos abaixo para compartilhar seu jogo</div>
+
+            <div class="limit-notice" id="limitNotice" style="display:none">
+                ⚠️ Você já postou hoje. Volte amanhã para postar novamente!
+            </div>
+
+            <form id="postForm" onsubmit="handleSubmit(event)">
                 <div class="form-group">
-                    <label>Nome do Jogo</label>
-                    <input type="text" id="game-name" required maxlength="30">
+                    <label class="form-label">👤 Seu Apelido</label>
+                    <input type="text" class="form-input" id="inputNick" placeholder="Ex: GameMaster99" maxlength="25" required>
                 </div>
+
                 <div class="form-group">
-                    <label>Categoria (ex: Ação, Puzzle)</label>
-                    <input type="text" id="game-category" required maxlength="20">
+                    <label class="form-label">🎯 Nome do Jogo</label>
+                    <input type="text" class="form-input" id="inputTitle" placeholder="Ex: Kour.io" maxlength="60" required>
+                    <div class="form-error" id="titleError"></div>
                 </div>
+
                 <div class="form-group">
-                    <label>Link da Capa (Imagem)</label>
-                    <input type="url" id="game-thumb-url" required placeholder="https://...">
+                    <label class="form-label">📝 Descrição (opcional)</label>
+                    <textarea class="form-textarea" id="inputDesc" placeholder="Uma breve descrição do jogo..." maxlength="200"></textarea>
+                    <div class="char-count"><span id="descCount">0</span>/200</div>
                 </div>
+
                 <div class="form-group">
-                    <label>Link do Jogo</label>
-                    <input type="url" id="game-url" required placeholder="https://...">
+                    <label class="form-label">🖼️ Link da Capa (URL da imagem)</label>
+                    <input type="url" class="form-input" id="inputCover" placeholder="https://exemplo.com/capa.jpg" required>
+                    <div class="form-hint">Cole a URL de uma imagem para a capa do jogo</div>
+                    <div class="form-preview" id="coverPreview">
+                        <img id="coverPreviewImg" alt="Preview">
+                    </div>
                 </div>
-                <div class="form-buttons">
-                    <button type="button" class="btn-cancel" onclick="closeAddModal()">Cancelar</button>
-                    <button type="submit" class="btn-submit">Publicar</button>
+
+                <div class="form-group">
+                    <label class="form-label">🔗 Link do Jogo (URL)</label>
+                    <input type="url" class="form-input" id="inputGameUrl" placeholder="https://exemplo.com/jogo/" required>
+                    <div class="form-hint">Link direto para o jogo HTML ou página do jogo</div>
                 </div>
+
+                <button type="submit" class="btn btn-primary form-submit" id="submitBtn">
+                    🚀 Publicar Jogo
+                </button>
             </form>
         </div>
     </div>
 
-    <script type="module">
-        // 1. Importações do Firebase SDK v9
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    <script>
+    // ============================================================
+    //  FIREBASE CONFIG & INIT
+    // ============================================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyDIh-GgqeniM2HQqllJnE1lekZmdqPs2vw",
+        authDomain: "bytez-fb71a.firebaseapp.com",
+        projectId: "bytez-fb71a",
+        storageBucket: "bytez-fb71a.firebasestorage.app",
+        messagingSenderId: "401836877835",
+        appId: "1:401836877835:web:2ef26b9bf8cb759302bf0e"
+    };
 
-        // 2. Configuração do Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyDIh-GgqeniM2HQqllJnE1lekZmdqPs2vw",
-            authDomain: "bytez-fb71a.firebaseapp.com",
-            projectId: "bytez-fb71a",
-            storageBucket: "bytez-fb71a.firebasestorage.app",
-            messagingSenderId: "401836877835",
-            appId: "1:401836877835:web:2ef26b9bf8cb759302bf0e"
-        };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+    // ============================================================
+    //  CONSTANTS
+    // ============================================================
+    const BLOCKED_WORDS = [
+        'hackeado','hacked','hack3ado','h4ckeado',
+        'deface','defaced','pwned','owned',
+        'vandalismo','vandalizado','invadido','invadida'
+    ];
 
-        // 3. Palavras Bloqueadas
-        const blockedWords = [
-            "hackeado", "hacked", "hack3ado", "h4ckeado", 
-            "deface", "defaced", "pwned", "owned", 
-            "vandalismo", "vandalizado", "invadido", "invadida"
-        ];
+    const PLACEHOLDER_IMG = "data:image/svg+xml," + encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="225" viewBox="0 0 400 225">' +
+        '<rect fill="#1e1e3a" width="400" height="225"/>' +
+        '<text fill="#7c5ce7" font-family="sans-serif" font-size="48" x="200" y="125" text-anchor="middle">🎮</text></svg>'
+    );
 
-        // Função para checar palavras bloqueadas
-        function hasBlockedWords(text) {
-            const lowerText = text.toLowerCase();
-            return blockedWords.some(word => lowerText.includes(word));
+    const DEFAULT_GAMES = [
+        {
+            id: 'bloxd-io',
+            titulo: 'Bloxd.io',
+            descricao: 'Jogo multiplayer estilo blocos em 3D',
+            capaUrl: 'https://imgs.search.brave.com/gd_GZo8gurrduUwsoP-Z3LiqBgapyTb2eiRR1LJFD9g/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9wbGF5/Lmd4LmdhbWVzL2dh/bWUvYWE3N2YxNzUt/YzY5Ni00MWNiLWI2/MjAtN2VlMmM0NmEz/NTMzL2NvdmVyL2Y1/YzNkYWEzLWFlNmUt/NDI0Ni1iZDFhLWUz/NDEwNmJhOWQwNS93/ZWJwLTY0MHgzNjA_/ZTNlZTYxODBjNTMy/ZGQxOTUzYjY5MGQx/YTQ2ZTIxZjE',
+            jogoUrl: 'https://bloxd.io/',
+            autor: 'ByteZ'
+        },
+        {
+            id: 'kour-io',
+            titulo: 'Kour.io',
+            descricao: 'FPS multiplayer direto no navegador',
+            capaUrl: 'https://imgs.search.brave.com/2Bmhsl3qR1MAfaI8ikZzJP5l4z5K1XQaYSbiqfQ0uDA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/dGl0b3R1LmlvL2lt/YWdlcy9nYW1lcy9r/b3VyLWlvLTM1Nngy/MDAuanBn',
+            jogoUrl: 'https://kour.io/',
+            autor: 'ByteZ'
+        },
+        {
+            id: 'veck-io',
+            titulo: 'Veck.io',
+            descricao: 'Jogo de naves multiplayer',
+            capaUrl: 'https://imgs.search.brave.com/1vVePyNLNA9V4yGgB3NaOmQ0FpkUE7KhCCDksGb_1pU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMudHJlbmRpbmdn/YW1lcy5pby9nYW1l/cy92ZWNraW8uanBn',
+            jogoUrl: 'https://veck.io/',
+            autor: 'ByteZ'
+        },
+        {
+            id: 'space-waves',
+            titulo: 'Space Waves',
+            descricao: 'Sobreviva às ondas espaciais',
+            capaUrl: 'https://imgs.search.brave.com/lM63nkRGzD5ZjxRwn6XOLaiL-9Tj117h-GVKJ63flAo/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zcGFj/ZXdhdmVzb25saW5l/LmlvL2RhdGEvaW1h/Z2UvZ2FtZS9zcGFj/ZS13YXZlcy1iYW5u/ZXIucG5n',
+            jogoUrl: 'https://spacewaves.io/',
+            autor: 'ByteZ'
+        },
+        {
+            id: 'evowars-io',
+            titulo: 'EvoWars.io',
+            descricao: 'Evolua seu guerreiro em batalhas multiplayer',
+            capaUrl: 'https://imgs.search.brave.com/B49AGYw1CDnIzYFrg6iMsvkCl9DbuqCbgFpGJEGH0ww/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9sbWht/b2QubWUvd3AtY29u/dGVudC91cGxvYWRz/LzIwMjIvMDUvRXZv/d2Fycy5pby1tb2Qu/anBn',
+            jogoUrl: 'https://evowars.io/?v=2.18.12',
+            autor: 'ByteZ'
+        },
+        {
+            id: 'xadrez',
+            titulo: 'Xadrez Online',
+            descricao: 'Jogo de xadrez clássico em HTML',
+            capaUrl: 'https://imgs.search.brave.com/EFXewqm1dwt_iZZABuryStrD1Qv_qH5MPC1HvRnIhH8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMucGV4ZWxzLmNv/bS9waG90b3MvMjYw/MDI0L3BleGVscy1w/aG90by0yNjAwMjQu/anBlZz9hdXRvPWNv/bXByZXNzJmNzPXRp/bnlzcmdiJmRwcj0x/Jnc9NTAw',
+            jogoUrl: 'https://pedrobocate-beep.github.io/xadrez/',
+            autor: 'ByteZ'
+        }
+    ];
+
+    // ============================================================
+    //  STATE
+    // ============================================================
+    let allGames = [];
+
+    // ============================================================
+    //  DOM ELEMENTS
+    // ============================================================
+    const $grid      = document.getElementById('gamesGrid');
+    const $loading   = document.getElementById('loading');
+    const $empty     = document.getElementById('emptyState');
+    const $counter   = document.getElementById('gameCount');
+    const $search    = document.getElementById('searchInput');
+    const $modal     = document.getElementById('postModal');
+    const $form      = document.getElementById('postForm');
+    const $limitNote = document.getElementById('limitNotice');
+    const $submitBtn = document.getElementById('submitBtn');
+    const $descCount = document.getElementById('descCount');
+    const $coverPrev = document.getElementById('coverPreview');
+    const $coverImg  = document.getElementById('coverPreviewImg');
+    const $titleErr  = document.getElementById('titleError');
+
+    // ============================================================
+    //  UTILITY FUNCTIONS
+    // ============================================================
+    function containsBlockedWord(text) {
+        const lower = text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        return BLOCKED_WORDS.some(w => lower.includes(w));
+    }
+
+    function canPostToday() {
+        const last = localStorage.getItem('bytez_lastPost');
+        if (!last) return true;
+        return last !== new Date().toDateString();
+    }
+
+    function markPostedToday() {
+        localStorage.setItem('bytez_lastPost', new Date().toDateString());
+    }
+
+    function formatDate(timestamp) {
+        if (!timestamp) return '';
+        const d = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+        return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
+    }
+
+    function escapeHtml(text) {
+        const d = document.createElement('div');
+        d.textContent = text;
+        return d.innerHTML;
+    }
+
+    // ============================================================
+    //  TOAST NOTIFICATIONS
+    // ============================================================
+    function showToast(message, type = 'info') {
+        const icons = { success:'✅', error:'❌', warning:'⚠️', info:'ℹ️' };
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.innerHTML = `<span>${icons[type] || ''}</span> ${escapeHtml(message)}`;
+        document.getElementById('toast-container').appendChild(toast);
+        setTimeout(() => {
+            toast.classList.add('removing');
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+
+    // ============================================================
+    //  MODAL
+    // ============================================================
+    function openPostModal() {
+        $modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        const canPost = canPostToday();
+        $limitNote.style.display = canPost ? 'none' : 'flex';
+        $submitBtn.disabled = !canPost;
+        $submitBtn.style.opacity = canPost ? '1' : '.4';
+
+        // Restore saved nick
+        const savedNick = localStorage.getItem('bytez_nick');
+        if (savedNick) document.getElementById('inputNick').value = savedNick;
+    }
+
+    function closePostModal() {
+        $modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function handleBackdropClick(e) {
+        if (e.target === $modal) closePostModal();
+    }
+
+    // ============================================================
+    //  COVER PREVIEW
+    // ============================================================
+    document.getElementById('inputCover').addEventListener('input', function() {
+        const url = this.value.trim();
+        if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+            $coverImg.src = url;
+            $coverImg.onload = () => $coverPrev.classList.add('visible');
+            $coverImg.onerror = () => $coverPrev.classList.remove('visible');
+        } else {
+            $coverPrev.classList.remove('visible');
+        }
+    });
+
+    // ============================================================
+    //  CHAR COUNTER
+    // ============================================================
+    document.getElementById('inputDesc').addEventListener('input', function() {
+        $descCount.textContent = this.value.length;
+    });
+
+    // ============================================================
+    //  RENDER GAMES
+    // ============================================================
+    function renderGames(games) {
+        $loading.style.display = 'none';
+
+        if (games.length === 0) {
+            $grid.innerHTML = '';
+            $empty.style.display = 'block';
+            $counter.textContent = '0';
+            return;
         }
 
-        // 4. Funções Globais (Tornando acessíveis no HTML)
-        window.openGame = (url) => {
-            const overlay = document.getElementById('game-overlay');
-            const iframe = document.getElementById('game-frame');
-            iframe.src = url;
-            overlay.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-        }
+        $empty.style.display = 'none';
+        $counter.textContent = games.length;
 
-        window.closeGame = () => {
-            document.getElementById('game-overlay').style.display = 'none';
-            document.getElementById('game-frame').src = ''; 
-            document.body.style.overflow = 'auto';
-        }
+        $grid.innerHTML = games.map((g, i) => `
+            <div class="game-card" style="animation-delay:${i * .06}s">
+                <div class="game-card-img-wrap">
+                    <img src="${escapeHtml(g.capaUrl)}"
+                         alt="${escapeHtml(g.titulo)}"
+                         loading="lazy"
+                         onerror="this.src='${PLACEHOLDER_IMG}'">
+                    <div class="overlay"></div>
+                </div>
+                <div class="game-card-body">
+                    <div class="game-card-title">${escapeHtml(g.titulo)}</div>
+                    ${g.descricao ? `<div style="font-size:.8rem;color:#7a7a96;margin-bottom:6px;
+                        overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;
+                        -webkit-box-orient:vertical;">${escapeHtml(g.descricao)}</div>` : ''}
+                    <div class="game-card-meta">
+                        <span>👤 ${escapeHtml(g.autor || 'Anônimo')}</span>
+                        <span>📅 ${formatDate(g.criadoEm)}</span>
+                    </div>
+                    <button class="btn btn-play" onclick="window.open('${escapeHtml(g.jogoUrl)}','_blank')">
+                        ▶ Jogar
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
 
-        window.openAddModal = () => {
-            document.getElementById('form-modal').style.display = 'flex';
-        }
+    // ============================================================
+    //  FILTER / SEARCH
+    // ============================================================
+    function filterGames() {
+        const q = $search.value.toLowerCase().trim();
+        if (!q) { renderGames(allGames); return; }
+        const filtered = allGames.filter(g =>
+            g.titulo.toLowerCase().includes(q) ||
+            (g.descricao && g.descricao.toLowerCase().includes(q)) ||
+            (g.autor && g.autor.toLowerCase().includes(q))
+        );
+        renderGames(filtered);
+    }
 
-        window.closeAddModal = () => {
-            document.getElementById('form-modal').style.display = 'none';
-            document.getElementById('add-game-form').reset();
-        }
-
-        // 5. Carregar Jogos do Banco de Dados
-        async function loadGames() {
-            const grid = document.getElementById('game-grid-container');
-            grid.innerHTML = ''; // Limpa o "Carregando..."
-
-            try {
-                const q = query(collection(db, "games"), orderBy("createdAt", "desc"));
-                const querySnapshot = await getDocs(q);
-                
-                if (querySnapshot.empty) {
-                    grid.innerHTML = '<p style="text-align: center; width: 100%; grid-column: 1 / -1;">Nenhum jogo postado ainda. Seja o primeiro!</p>';
-                    return;
-                }
-
-                querySnapshot.forEach((doc) => {
-                    const game = doc.data();
-                    const card = document.createElement('div');
-                    card.className = 'game-card';
-                    card.onclick = () => window.openGame(game.url);
-                    
-                    card.innerHTML = `
-                        <div class="game-thumb" style="background-image: url('${game.thumb}')"></div>
-                        <div class="game-info">
-                            <h3>${game.name}</h3>
-                            <p>${game.category}</p>
-                        </div>
-                    `;
-                    grid.appendChild(card);
+    // ============================================================
+    //  SEED DEFAULT GAMES
+    // ============================================================
+    async function seedIfEmpty() {
+        try {
+            const snap = await db.collection('jogos').limit(1).get();
+            if (snap.empty) {
+                const batch = db.batch();
+                DEFAULT_GAMES.forEach(g => {
+                    const ref = db.collection('jogos').doc(g.id);
+                    batch.set(ref, {
+                        titulo: g.titulo,
+                        descricao: g.descricao || '',
+                        capaUrl: g.capaUrl,
+                        jogoUrl: g.jogoUrl,
+                        autor: g.autor,
+                        criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+                    });
                 });
-            } catch (error) {
-                console.error("Erro ao carregar jogos: ", error);
-                grid.innerHTML = '<p style="color: red; text-align: center; grid-column: 1 / -1;">Erro ao carregar a lista de jogos.</p>';
+                await batch.commit();
+                console.log('✅ Jogos padrão adicionados');
             }
+        } catch (e) {
+            console.error('Seed error:', e);
+        }
+    }
+
+    // ============================================================
+    //  LOAD GAMES (real-time)
+    // ============================================================
+    function loadGames() {
+        db.collection('jogos')
+          .orderBy('criadoEm', 'desc')
+          .onSnapshot(snapshot => {
+              allGames = [];
+              snapshot.forEach(doc => {
+                  allGames.push({ id: doc.id, ...doc.data() });
+              });
+              filterGames();
+          }, err => {
+              console.error('Firestore error:', err);
+              $loading.style.display = 'none';
+              showToast('Erro ao carregar jogos. Verifique o Firestore.', 'error');
+          });
+    }
+
+    // ============================================================
+    //  SUBMIT NEW GAME
+    // ============================================================
+    async function handleSubmit(e) {
+        e.preventDefault();
+        $titleErr.classList.remove('visible');
+
+        if (!canPostToday()) {
+            showToast('Você já postou hoje! Volte amanhã.', 'warning');
+            return;
         }
 
-        // 6. Lógica de Postagem (Submit do Formulário)
-        document.getElementById('add-game-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        const nick    = document.getElementById('inputNick').value.trim();
+        const title   = document.getElementById('inputTitle').value.trim();
+        const desc    = document.getElementById('inputDesc').value.trim();
+        const cover   = document.getElementById('inputCover').value.trim();
+        const gameUrl = document.getElementById('inputGameUrl').value.trim();
 
-            // Verificação de Limite de 1 post por dia (24h = 86400000 ms)
-            const lastPostTime = localStorage.getItem('bytez_last_post');
-            if (lastPostTime) {
-                const timePassed = Date.now() - parseInt(lastPostTime);
-                if (timePassed < 86400000) {
-                    alert('Você já postou um jogo hoje! Volte amanhã para postar mais.');
-                    return;
-                }
-            }
+        // Blocked words check
+        const allText = `${nick} ${title} ${desc} ${cover} ${gameUrl}`;
+        if (containsBlockedWord(allText)) {
+            $titleErr.textContent = '🚫 Conteúdo bloqueado detectado. Remova palavras proibidas.';
+            $titleErr.classList.add('visible');
+            showToast('Palavra bloqueada detectada!', 'error');
+            return;
+        }
 
-            const name = document.getElementById('game-name').value;
-            const category = document.getElementById('game-category').value;
-            const thumb = document.getElementById('game-thumb-url').value;
-            const url = document.getElementById('game-url').value;
+        // URL validation
+        if (!cover.startsWith('http://') && !cover.startsWith('https://')) {
+            showToast('URL da capa inválida', 'error');
+            return;
+        }
+        if (!gameUrl.startsWith('http://') && !gameUrl.startsWith('https://')) {
+            showToast('URL do jogo inválida', 'error');
+            return;
+        }
 
-            // Verificação de Palavras Bloqueadas
-            if (hasBlockedWords(name) || hasBlockedWords(category)) {
-                alert('Atenção: O nome ou a categoria contém palavras que não são permitidas em nossa comunidade.');
-                return;
-            }
+        $submitBtn.disabled = true;
+        $submitBtn.textContent = '⏳ Publicando...';
 
-            try {
-                // Adiciona no Firebase
-                await addDoc(collection(db, "games"), {
-                    name: name,
-                    category: category,
-                    thumb: thumb,
-                    url: url,
-                    createdAt: serverTimestamp()
-                });
+        try {
+            await db.collection('jogos').add({
+                titulo: title,
+                descricao: desc,
+                capaUrl: cover,
+                jogoUrl: gameUrl,
+                autor: nick,
+                criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+            });
 
-                // Salva a hora do post no LocalStorage
-                localStorage.setItem('bytez_last_post', Date.now());
+            markPostedToday();
+            localStorage.setItem('bytez_nick', nick);
 
-                alert('Jogo postado com sucesso!');
-                window.closeAddModal();
-                loadGames(); // Recarrega a grid para mostrar o novo jogo
+            showToast('Jogo publicado com sucesso! 🎉', 'success');
+            $form.reset();
+            $coverPrev.classList.remove('visible');
+            $descCount.textContent = '0';
+            closePostModal();
+        } catch (err) {
+            console.error('Submit error:', err);
+            showToast('Erro ao publicar. Tente novamente.', 'error');
+        } finally {
+            $submitBtn.disabled = false;
+            $submitBtn.textContent = '🚀 Publicar Jogo';
+        }
+    }
 
-            } catch (error) {
-                console.error("Erro ao adicionar documento: ", error);
-                alert('Erro ao postar o jogo. Tente novamente.');
-            }
-        });
+    // ============================================================
+    //  KEYBOARD SHORTCUT
+    // ============================================================
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closePostModal();
+    });
 
-        // Inicializa carregando os jogos quando a página abre
+    // ============================================================
+    //  INIT
+    // ============================================================
+    (async function init() {
+        await seedIfEmpty();
         loadGames();
-
+    })();
     </script>
 </body>
 </html>
